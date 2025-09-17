@@ -1,0 +1,27 @@
+﻿@page
+@model UI.Pages.IndexModel
+@{
+    ViewData["Title"] = "Генерація піктограми";
+}
+
+<h2>Генерація піктограми</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div>
+        <label>Текстовий опис:</label><br />
+        <input type="text" name="description" style="width:300px;" />
+    </div>
+    <div>
+        <label>Файл зі стилем (опційно):</label><br />
+        <input type="file" name="styleFile" />
+    </div>
+    <div style="margin-top:10px;">
+        <button type="submit">Згенерувати</button>
+    </div>
+</form>
+
+@if (Model.GeneratedImagePath != null)
+{
+    <h3>Результат:</h3>
+    <img src="@Model.GeneratedImagePath" style="max-width:400px;" />
+}
