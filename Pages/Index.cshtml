@@ -1,27 +1,109 @@
 ﻿@page
 @model UI.Pages.IndexModel
 @{
-    ViewData["Title"] = "Генерація піктограми";
+    ViewData["Title"] = "Аналіз піктограми";
 }
 
-<h2>Генерація піктограми</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Аналіз піктограми</h2>
 
-<form method="post" enctype="multipart/form-data">
-    <div>
-        <label>Текстовий опис:</label><br />
-        <input type="text" name="description" style="width:300px;" />
-    </div>
-    <div>
-        <label>Файл зі стилем (опційно):</label><br />
-        <input type="file" name="styleFile" />
-    </div>
-    <div style="margin-top:10px;">
-        <button type="submit">Згенерувати</button>
-    </div>
-</form>
+    <div class="border p-4 bg-light rounded shadow-sm">
+        <div class="mb-3">
+            <label class="form-label">Завантажити зображення</label>
+            <input type="file" class="form-control" id="iconFile">
+        </div>
 
-@if (Model.GeneratedImagePath != null)
-{
-    <h3>Результат:</h3>
-    <img src="@Model.GeneratedImagePath" style="max-width:400px;" />
+        <div class="mb-3 row">
+            <div class="col">
+                <label class="form-label">Формат / Розмір</label>
+                <div class="d-flex">
+                    <select class="form-select me-2" id="formatSelect" style="flex:1">
+                        <option value="svg">SVG</option>
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                    </select>
+
+                    <select class="form-select" id="sizeSelect" style="flex:1">
+                        <option value="64x64">64x64</option>
+                        <option value="128x128" selected>128x128</option>
+                        <option value="256x256">256x256</option>
+                        <option value="512x512">512x512</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Палітра кольорів</label><br />
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="palette" id="color" value="color" checked>
+                <label class="form-check-label" for="color">Кольорова</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="palette" id="bw" value="bw">
+                <label class="form-check-label" for="bw">Чорно-біла</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Стиль</label><br />
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="pixel" value="Pixel art">
+                <label class="form-check-label" for="pixel">Pixel art</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sketch" value="Sketch">
+                <label class="form-check-label" for="sketch">Sketch</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="3d" value="3D">
+                <label class="form-check-label" for="3d">3D</label>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="button" class="btn btn-primary" id="analyzeBtn">Аналізувати</button>
+        </div>
+    </div>
+
+    <!-- Зона результату -->
+    <div class="mt-4" id="result" style="display:none;">
+        <h4>Результат аналізу:</h4>
+        <ul class="list-group">
+            <li class="list-group-item">Формат: <span id="resFormat"></span></li>
+            <li class="list-group-item">Розмір: <span id="resSize"></span></li>
+            <li class="list-group-item">Палітра: <span id="resPalette"></span></li>
+            <li class="list-group-item">Стиль: <span id="resStyle"></span></li>
+        </ul>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('analyzeBtn').addEventListener('click', () => {
+            // Формат
+            const format = document.getElementById('formatSelect').value;
+
+            // Розмір
+            const size = document.getElementById('sizeSelect').value;
+
+            // Палітра
+            const palette = document.querySelector('input[name="palette"]:checked').value;
+
+            // Стиль
+            const styles = [];
+            if(document.getElementById('pixel').checked) styles.push('Pixel art');
+            if(document.getElementById('sketch').checked) styles.push('Sketch');
+            if(document.getElementById('3d').checked) styles.push('3D');
+
+            // Показати результат
+            document.getElementById('resFormat').innerText = format.toUpperCase();
+            document.getElementById('resSize').innerText = size + " px";
+            document.getElementById('resPalette').innerText = palette === 'color' ? 'Кольорова' : 'Чорно-біла';
+            document.getElementById('resStyle').innerText = styles.join(', ') || 'Немає';
+
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+}
 }

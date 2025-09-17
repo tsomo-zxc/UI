@@ -1,0 +1,19 @@
+﻿body {
+    background-color: #f7f9fc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2 {
+    color: #333;
+}
+
+form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+img {
+    border: 1px solid #ddd;
+    padding: 5px;
+    background: #fff;
+}
