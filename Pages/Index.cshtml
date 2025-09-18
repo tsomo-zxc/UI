@@ -4,106 +4,161 @@
     ViewData["Title"] = "Аналіз піктограми";
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4 text-center">Аналіз піктограми</h2>
+<div class="container mt-4">
+    <!-- Блок аналізу -->
+    <div class="card mb-4">
+        <div class="card-header">Аналіз піктограми</div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Завантаження -->
+                <div class="col-md-6">
+                    <label for="iconFile" class="form-label">Завантажте зображення</label>
+                    <input class="form-control mb-3" type="file" id="iconFile" accept="image/*">
 
-    <div class="border p-4 bg-light rounded shadow-sm">
-        <div class="mb-3">
-            <label class="form-label">Завантажити зображення</label>
-            <input type="file" class="form-control" id="iconFile">
-        </div>
+                    <div class="mb-3">
+                        <button class="btn btn-primary me-2" id="btnAnalyze">Аналізувати</button>
+                        <button class="btn btn-success me-2" id="btnDownload">Завантажити JSON</button>
+                        <button class="btn btn-warning" id="btnTransfer">Передати в генерацію</button>
+                    </div>
+                </div>
 
-        <div class="mb-3 row">
-            <div class="col">
-                <label class="form-label">Формат / Розмір</label>
-                <div class="d-flex">
-                    <select class="form-select me-2" id="formatSelect" style="flex:1">
-                        <option value="svg">SVG</option>
-                        <option value="png">PNG</option>
-                        <option value="jpg">JPG</option>
-                    </select>
-
-                    <select class="form-select" id="sizeSelect" style="flex:1">
-                        <option value="64x64">64x64</option>
-                        <option value="128x128" selected>128x128</option>
-                        <option value="256x256">256x256</option>
-                        <option value="512x512">512x512</option>
-                    </select>
+                <!-- Превʼю -->
+                <div class="col-md-6 d-flex align-items-center justify-content-center">
+                    <img id="preview" src="" alt="Превʼю піктограми"
+                         style="max-width: 200px; max-height: 200px; display: none; border:1px solid #ddd; border-radius:8px; padding:5px;" />
                 </div>
             </div>
-        </div>
 
-        <div class="mb-3">
-            <label class="form-label">Палітра кольорів</label><br />
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="palette" id="color" value="color" checked>
-                <label class="form-check-label" for="color">Кольорова</label>
+            <!-- Результати аналізу -->
+            <div class="mt-3">
+                <h6>Результат аналізу:</h6>
+                <pre id="analysisResult" class="p-2 bg-light border rounded" style="min-height: 80px;">(поки порожньо)</pre>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="palette" id="bw" value="bw">
-                <label class="form-check-label" for="bw">Чорно-біла</label>
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Стиль</label><br />
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="pixel" value="Pixel art">
-                <label class="form-check-label" for="pixel">Pixel art</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="sketch" value="Sketch">
-                <label class="form-check-label" for="sketch">Sketch</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="3d" value="3D">
-                <label class="form-check-label" for="3d">3D</label>
-            </div>
-        </div>
-
-        <div class="text-center">
-            <button type="button" class="btn btn-primary" id="analyzeBtn">Аналізувати</button>
         </div>
     </div>
 
-    <!-- Зона результату -->
-    <div class="mt-4" id="result" style="display:none;">
-        <h4>Результат аналізу:</h4>
-        <ul class="list-group">
-            <li class="list-group-item">Формат: <span id="resFormat"></span></li>
-            <li class="list-group-item">Розмір: <span id="resSize"></span></li>
-            <li class="list-group-item">Палітра: <span id="resPalette"></span></li>
-            <li class="list-group-item">Стиль: <span id="resStyle"></span></li>
-        </ul>
+    <!-- Блок генерації -->
+    <div id="generationForm" class="card p-3">
+        <h5 class="mb-3">Генерація піктограм</h5>
+        <div class="mb-3">
+            <label class="form-label">Опис для генерації</label>
+            <textarea class="form-control" id="generationPrompt" rows="4"
+                      placeholder="Опишіть бажані піктограми, наприклад: іконка кошика "></textarea>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Формат</label>
+                <select class="form-select" id="format">
+                    <option value="png">PNG</option>
+                    <option value="svg">SVG</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Розмір</label>
+                <select class="form-select" id="size">
+                    <option value="64x64">64x64</option>
+                    <option value="128x128">128x128</option>
+                    <option value="256x256">256x256</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Кольорова палітра</label>
+            <input type="text" class="form-control" id="palette" placeholder="наприклад: монохром, пастельні...">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Стилі</label><br />
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" value="flat" id="styleFlat">
+                <label class="form-check-label" for="styleFlat">Flat</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" value="3d" id="style3d">
+                <label class="form-check-label" for="style3d">3D</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" value="pixel" id="stylePixel">
+                <label class="form-check-label" for="stylePixel">Pixel Art</label>
+            </div>
+        </div>      
+
+        <button type="button" class="btn btn-success" id="btnGenerate">Згенерувати</button>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        document.getElementById('analyzeBtn').addEventListener('click', () => {
+        // Превʼю
+        document.getElementById("iconFile").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById("preview");
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Аналіз (демо)
+        document.getElementById("btnAnalyze").addEventListener("click", function () {
+            const analysis = {
+                format: "PNG",
+                size: "128x128",
+                palette: "пастель",
+                styles: ["Pixel Art", "Sketch"]
+            };
+            document.getElementById("analysisResult").textContent = JSON.stringify(analysis, null, 2);
+        });
+
+        // Завантаження JSON
+        document.getElementById("btnDownload").addEventListener("click", function () {
+            const data = document.getElementById("analysisResult").textContent;
+            const blob = new Blob([data], { type: "application/json" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "analysis.json";
+            link.click();
+        });
+
+        // Передати в генерацію
+        document.getElementById("btnTransfer").addEventListener("click", function () {
+            const analysisText = document.getElementById("analysisResult").textContent;
+            if (!analysisText || analysisText === "(поки порожньо)") return;
+
+            const analysis = JSON.parse(analysisText);
+
             // Формат
-            const format = document.getElementById('formatSelect').value;
+            document.getElementById("format").value = analysis.format.toLowerCase();
 
             // Розмір
-            const size = document.getElementById('sizeSelect').value;
+            document.getElementById("size").value = analysis.size;
 
             // Палітра
-            const palette = document.querySelector('input[name="palette"]:checked').value;
+            document.getElementById("palette").value = analysis.palette;
 
-            // Стиль
-            const styles = [];
-            if(document.getElementById('pixel').checked) styles.push('Pixel art');
-            if(document.getElementById('sketch').checked) styles.push('Sketch');
-            if(document.getElementById('3d').checked) styles.push('3D');
+            // Стилі
+            document.querySelectorAll(".form-check-input").forEach(cb => {
+                cb.checked = analysis.styles.includes(cb.value);
+            });
+        });
 
-            // Показати результат
-            document.getElementById('resFormat').innerText = format.toUpperCase();
-            document.getElementById('resSize').innerText = size + " px";
-            document.getElementById('resPalette').innerText = palette === 'color' ? 'Кольорова' : 'Чорно-біла';
-            document.getElementById('resStyle').innerText = styles.join(', ') || 'Немає';
-
-            document.getElementById('result').style.display = 'block';
+        // Перемикання режимів (винесено окремо!)
+        document.querySelectorAll("input[name='genMode']").forEach(radio => {
+            radio.addEventListener("change", function () {
+                if (this.value === "single") {
+                    document.getElementById("singleForm").style.display = "block";
+                    document.getElementById("listForm").style.display = "none";
+                } else {
+                    document.getElementById("singleForm").style.display = "none";
+                    document.getElementById("listForm").style.display = "block";
+                }
+            });
         });
     </script>
 }
-}
+
